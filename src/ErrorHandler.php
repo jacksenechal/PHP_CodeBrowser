@@ -122,17 +122,8 @@ class CbErrorHandler
         }
 
         foreach ($errors as $key => &$error) {
-            $error['complete'] = preg_replace(
-                array(
-                    sprintf(
-                        '(.*%s\%s)',
-                        $commonSourcePath,
-                        DIRECTORY_SEPARATOR
-                    )
-                ),
-                '',
-                $error['complete']
-            );
+            $pattern = '/.*'. preg_quote($commonSourcePath.DIRECTORY_SEPARATOR, '/').'/';
+            $error['complete'] = preg_replace($pattern, '', $error['complete']);
             $error['path'] = $commonSourcePath;
         }
         return $errors;
@@ -171,14 +162,9 @@ class CbErrorHandler
             }
 
             // set proper error format for files without errors
-            $tmp['complete']      = preg_replace(
-                array(
-                    sprintf(
-                        '(.*%s\%s)',
-                        basename(realpath($sourceDir)),
-                        DIRECTORY_SEPARATOR
-                    )
-                ),
+            $pattern = '/.*'. preg_quote(basename(realpath($sourceDir)).DIRECTORY_SEPARATOR, '/').'/';
+            $tmp['complete'] = preg_replace(
+                $pattern,
                 '',
                 realpath($item->getPath() . DIRECTORY_SEPARATOR . $item->getFilename())
             );
